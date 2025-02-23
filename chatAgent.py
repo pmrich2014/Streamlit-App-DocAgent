@@ -4,7 +4,7 @@ from streamlit.logger import get_logger
 
 LOGGER = get_logger(__name__)
 
-API_URL = "http://localhost:8000/chat"  # Update with the correct API URL if needed
+API_URL = "https://documentchatbot-production.up.railway.app/chat"  # Update with the correct API URL if needed
 
 def main():
     st.title("Bartlesville HS Handbook Chatbot")
