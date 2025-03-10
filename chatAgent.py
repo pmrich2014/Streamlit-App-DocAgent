@@ -6,7 +6,7 @@ from streamlit_js_eval import streamlit_js_eval
 
 LOGGER = get_logger(__name__)
 
-API_URL = "http://localhost:8000/chat"  # Update with the correct API URL if needed
+API_URL = "https://documentchatbot-production.up.railway.app/chat"
 
 def is_dark_mode():
     is_dark_mode = streamlit_js_eval(js_expressions="window.matchMedia('(prefers-color-scheme: dark)').matches", key="theme")
