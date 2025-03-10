@@ -12,10 +12,8 @@ def is_dark_mode():
     is_dark_mode = streamlit_js_eval(js_expressions="window.matchMedia('(prefers-color-scheme: dark)').matches", key="theme")
 
     if is_dark_mode:        
-        avatar_url = "./white_bruin.png"  
-        print("Dark mode is enabled")
-    else:        
-        print("Dark mode is disabled")
+        avatar_url = "./white_bruin.png"         
+    else:                
         avatar_url = "./bruin.png"  
 
     return avatar_url    
