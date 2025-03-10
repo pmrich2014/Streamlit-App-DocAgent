@@ -2,16 +2,28 @@ import streamlit as st
 import requests
 import json
 from streamlit.logger import get_logger
+from streamlit_js_eval import streamlit_js_eval
 
 LOGGER = get_logger(__name__)
 
-API_URL = "https://documentchatbot-production.up.railway.app/chat"
+API_URL = "http://localhost:8000/chat"  # Update with the correct API URL if needed
 
-avatar_url = "./bruin.png"
+def is_dark_mode():
+    is_dark_mode = streamlit_js_eval(js_expressions="window.matchMedia('(prefers-color-scheme: dark)').matches", key="theme")
 
+    if is_dark_mode:        
+        avatar_url = "./white_bruin.png"  
+        print("Dark mode is enabled")
+    else:        
+        print("Dark mode is disabled")
+        avatar_url = "./bruin.png"  
 
-def main():
+    return avatar_url    
 
+def main():       
+
+    avatar_url = is_dark_mode()     
+        
     st.title("Handbook Chatbot")
     
     st.sidebar.title("About")
@@ -19,18 +31,29 @@ def main():
         """
         Looking for informaiton from the <a href="https://www.bps-ok.org/documents/parents-%26-students/student-handbooks/359802" target="_blank">Bartlesville High School</a> handbook? 
         <br><br>
-        This friendly chatbot is here to help by providing answers straight from the official handbook.    """
+        This friendly chatbot is here to help by providing answers straight from the official handbook.
+        <br><br>
+        <a href="https://blog.paulmrichardson.com/handbook-chatbot-change-log" target="_blank">More Information & Change Log...</a>"""
     )
+    
+    st.sidebar.info(        
+        """
+        Developed by: Paul Richardson 
+    """)
+
     st.sidebar.title("Disclaimer") 
     st.sidebar.html("""
-            This is a demo project created for learning purposes and is not an official resource. 
-            The site and the information provided are <b>NOT</b> affiliated with Bartlesville High School 
-            or any Bartlesville schools. While the chatbot provides answers based on the handbook, 
-            users should <b>VERIFY INFORMATION</b> provided. This site is hosted on open-source 
-            and free resources, so performance may vary, and response times could be slow.
-            Thank you for your understanding!
+        This chatbot is an independent learning project developed solely for educational purposes. 
+        It is not an official resource of Bartlesville High School or any Bartlesville Public School entity. 
+        While responses are generated from the Bartlesville High School Student Handbook, the accuracy,
+        completeness, or currency of information provided cannot be guaranteed. 
+        Users should always <b>VERIFY INFORMATION DIRECTLY WITH OFFICIAL SCHOOL RESOURCES</b> before making 
+        decisions or taking action based on the chatbot’s responses. 
+        <br><br>
+        This tool is hosted using free and open-source resources; therefore, availability, performance, and response times may vary.
+          
     """)
-    st.sidebar.info("Developed by: Paul Richardson")
+   
 
      # Initialize session state for chat history
     if 'messages' not in st.session_state:
@@ -43,7 +66,7 @@ def main():
          
         
     # Default model choice  
-    model_choice = "llama"
+    model_choice = "llama"   
 
     # Display initial message
     if not st.session_state.messages:
