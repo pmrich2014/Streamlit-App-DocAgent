@@ -87,7 +87,7 @@ def main():
                             To get started, just type a question. For example:
 
                             - *What’s the dress code policy?*                            
-                            - *What if a student becomes iss or is injured at school?*
+                            - *What if a student becomes ill or is injured at school?*
                             - *What if a student needs to take medication during school hours?*
                             - *What's happening at BHS this week?*
                             - *What is the last day of school?*
