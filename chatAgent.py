@@ -79,9 +79,7 @@ def main():
     #            upcoming events I can help! If you have a question, please ask and I will do my best to provide an answer. " 
     
     greeting = greeting = """
-                            ### Hello! 👋
-
-                            I'm your friendly **Bartlesville High School assistant**! I can help you:
+                            👋 I'm your friendly **Bartlesville High School assistant**! I can help you:
 
                             - 📚 **Answer questions** from the BHS Student Handbook
                             - 📆 **Provide information** about upcoming BHS events from the BHS event calendar
@@ -94,7 +92,7 @@ def main():
                             - *“What's happening at BHS this week?”*
                             - *"What is the last day of school?"*
 
-                            I'm here and ready to help! 😊
+                            I'm here and ready to help!
                             """
     # Display initial message
     if not st.session_state.messages:
