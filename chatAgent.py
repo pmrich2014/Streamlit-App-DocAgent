@@ -5,7 +5,7 @@ import json
 from streamlit.logger import get_logger
 from streamlit_js_eval import streamlit_js_eval
 from better_profanity import profanity  
-from dotenv import load_dotenv
+# from dotenv import load_dotenv
 import os
 
 #load_dotenv()
