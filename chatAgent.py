@@ -5,10 +5,17 @@ import json
 from streamlit.logger import get_logger
 from streamlit_js_eval import streamlit_js_eval
 from better_profanity import profanity  
+from dotenv import load_dotenv
+import os
+
+#load_dotenv()
+
+# API_KEY_APP = os.getenv("API_KEY_APP")
+# API_URL = os.getenv("API_URL")
 
 LOGGER = get_logger(__name__)
 
-API_URL = "https://documentchatbot-production.up.railway.app/chat"
+ # Update with the correct API URL if needed
 
 def is_dark_mode():
     is_dark_mode = streamlit_js_eval(js_expressions="window.matchMedia('(prefers-color-scheme: dark)').matches", key="theme")
@@ -79,7 +86,7 @@ def main():
     #            upcoming events I can help! If you have a question, please ask and I will do my best to provide an answer. " 
     
     greeting = greeting = """
-                            I'm your friendly **Bartlesville High School assistant**! I can help you:
+                            👋 I'm your friendly **Bartlesville High School assistant**! I can help you:
 
                             - 📚 **Answer questions** from the BHS Student Handbook
                             - 📆 **Provide information** about upcoming BHS events from the BHS event calendar
@@ -87,7 +94,7 @@ def main():
                             To get started, just type a question. For example:
 
                             - *What’s the dress code policy?*                            
-                            - *What if a student becomes ill or is injured at school?*
+                            - *What if a student becomes iss or is injured at school?*
                             - *What if a student needs to take medication during school hours?*
                             - *What's happening at BHS this week?*
                             - *What is the last day of school?*
@@ -129,12 +136,18 @@ def main():
                 st.error("Error in getting response from the API.")
     
 def send_query(query):
+    
     payload = {
         "query": query                
     }
+
+    headers = {
+            "X-API-Key": API_KEY_APP
+        }
+    
     try:
         
-        response = requests.post(API_URL, json=payload)
+        response = requests.post(API_URL, headers=headers, json=payload)
         response.raise_for_status()        
         print(response.json())
         return response.json(), None
