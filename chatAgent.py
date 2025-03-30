@@ -5,13 +5,13 @@ import json
 from streamlit.logger import get_logger
 from streamlit_js_eval import streamlit_js_eval
 from better_profanity import profanity  
-from dotenv import load_dotenv
+# from dotenv import load_dotenv
 import os
 
 #load_dotenv()
 
-# API_KEY_APP = os.getenv("API_KEY_APP")
-# API_URL = os.getenv("API_URL")
+API_KEY_APP = os.getenv("API_KEY_APP")
+API_URL = os.getenv("API_URL")
 
 LOGGER = get_logger(__name__)
 
