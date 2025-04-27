@@ -5,13 +5,18 @@ import json
 from streamlit.logger import get_logger
 from streamlit_js_eval import streamlit_js_eval
 from better_profanity import profanity  
-# from dotenv import load_dotenv
+#from dotenv import load_dotenv
 import os
+from supabase import create_client, Client
 
 #load_dotenv()
 
 API_KEY_APP = os.getenv("API_KEY_APP")
 API_URL = os.getenv("API_URL")
+SUPABASE_URL = os.getenv("SUPABASE_URL")
+SUPABASE_KEY = os.getenv("SUPABASE_KEY")
+supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
+
 
 LOGGER = get_logger(__name__)
 
@@ -27,9 +32,70 @@ def is_dark_mode():
 
     return avatar_url    
 
+def register():
+    st.title("Sign Up")
 
-def main():       
+    # Access password gate    
+    email = st.text_input("Email")
+    password = st.text_input("Password", type="password")
 
+    if st.button("Register"):      
+
+        try:
+            user_resp = supabase.auth.sign_up({"email": email, "password": password})
+            if user_resp.user:
+                st.success("Registration successful. Please check your email and then log in.")
+        except Exception as e:
+            st.error(f"Signup failed: {e}")
+
+# def register():
+#     st.title("Sign Up")
+
+#     access = st.query_params.get("access")
+#     if access != "inviteonly":
+#         st.warning("You are not authorized to register. Please use the invite link.")
+#         st.stop()
+
+#     email = st.text_input("Email")
+#     password = st.text_input("Password", type="password")
+
+#     if st.button("Register"):
+#         try:
+#             user_resp = supabase.auth.sign_up({"email": email, "password": password})
+#             if user_resp.user:
+#                 st.success("Registration successful. Please check your email and then log in.")
+#         except Exception as e:
+#             st.error(f"Signup failed: {e}")
+
+def login():
+    st.title("Login")
+    email = st.text_input("Email")
+    password = st.text_input("Password", type="password")
+    
+
+    if st.button("Login"):
+        try:
+            auth_resp = supabase.auth.sign_in_with_password({"email": email, "password": password})
+            if auth_resp.user:
+                st.session_state.user = auth_resp.user
+                st.success("Login successful.")
+
+                # Insert profile if not exists
+                uid = auth_resp.user.id
+                profile_check = supabase.table("profiles").select("*").eq("user_id", uid).execute()
+                if not profile_check.data:
+                    supabase.table("profiles").insert({
+                        "user_id": uid,
+                        "email": email                        
+                    }).execute()
+
+                st.rerun()
+        except Exception as e:
+            st.error(f"Login failed: {e}")
+
+
+def main_app():          
+     
     avatar_url = is_dark_mode()
     # print(avatar_url)   
         
@@ -42,9 +108,10 @@ def main():
         <br><br>
         <a href="https://blog.paulmrichardson.com/handbook-chatbot-change-log" target="_blank">More Information & Change Log...</a>
         <br><br>
-        Answers are sourced from the following documents:
+        Answers are sourced from copies of the following documents:
         <ul><a href="https://www.bps-ok.org/documents/parents-%26-students/student-handbooks/359802" target="_blank">Bartlesville High School Handbook</a>
         <ul><a href="https://calendar.google.com/calendar/u/0/embed?src=bps-ok.org_k9egfkkhgo7p8auk5stmq654ng@group.calendar.google.com&ctz=America/Chicago" target="_blank">BHS Google Event Calendar</a>
+        <ul><a href="https://docs.google.com/document/d/1tVJ5yaPs4yNL3P-qPZqdT61hCfaVHIthm81PRSRvF60/preview?tab=t.0" target="_blank">BHS Fequently Asked Questions</a>
        """
     )
     
@@ -109,7 +176,7 @@ def main():
             st.session_state.messages.append({"role": "assistant", "content": initial_message, "avatar": avatar_url})            
 
     # User input    
-    if user_query := st.chat_input("Ask a question:"):
+    if user_query := st.chat_input("Ask a question:"):       
 
         # Check for profanity
         if profanity.contains_profanity(user_query):
@@ -134,6 +201,8 @@ def main():
                     st.session_state.messages.append({"role": "assistant", "content": response.get('generation', 'No reponse from API'), "avatar": avatar_url})
             else:
                 st.error("Error in getting response from the API.")
+
+
     
 def send_query(query):
     
@@ -161,5 +230,22 @@ def fake_query(query):
     response = json.loads(json.dumps(response))
     return response, None 
 
-if __name__ == "__main__":            
+# --- Entry Point ---
+def main():
+    if 'user' not in st.session_state:
+        # Always show both options
+        options = ["Login", "Sign Up"]
+
+        auth_mode = st.sidebar.radio("Select option:", options)
+
+        if auth_mode == "Login":
+            login()
+        elif auth_mode == "Sign Up":
+            register()
+
+        st.stop()
+    else:
+        main_app()
+
+if __name__ == "__main__":
     main()
